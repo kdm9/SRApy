@@ -77,8 +77,9 @@ def get_run(sra_id):
     run_info = parse_run(sra_id)
     url_template = ('ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/'
                     'reads/ByRun/sra/{leading3}/{leading6}/{all}/{all}.sra')
+    run = run_info['accession']
     run_url = url_template.format(leading3=run[:3], leading6=run[:6], all=run)
-    outfile = '{}~{}.sra'.format(run_info['accession'], run_info['name'])
+    outfile = '{}~{}.sra'.format(run, run_info['name'])
     urlretrieve(run_url, outfile)
 
 
