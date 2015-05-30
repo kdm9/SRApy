@@ -11,11 +11,13 @@ Installation
 
 is all anyone on a modern system with pip should need. Dependencies are:
 
-- BioPython
-- lxml
-- docopt
-- progressbar2
+- `BioPython`
+- `lxml`
+- `docopt`
+- `progressbar2`
 
+`lxml` depends on the libxml and libxslt C libraries, so you may need to
+install them with `sudo aptitude install libxml2-dev libxslt1-dev` or similar.
 
 License
 =======
