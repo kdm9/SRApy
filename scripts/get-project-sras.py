@@ -14,7 +14,7 @@ from srapy import (
 
 CLI_USAGE = """
 USAGE:
-    get-project.py [-e EMAIL -d OUTDIR] -p PROJECT_ID
+    get-project-sras.py [-e EMAIL -d OUTDIR] -p PROJECT_ID
 
 OPTIONS:
     -e EMAIL        Your email, to provide to Bio.Entrez
