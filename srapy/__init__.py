@@ -5,6 +5,7 @@ from progressbar import FileTransferSpeed, Bar, Percentage, ETA, ProgressBar
 from sys import stderr
 import urllib2
 
+
 # SRA XML xpath
 XPATHS = {
     'name':
@@ -106,3 +107,9 @@ def esearch_ids(**kwargs):
     # Convert str-encoded ints to actual ints.
     id_list = map(int, id_list)
     return id_list
+
+
+# versioneer
+from ._version import get_versions
+__version__ = get_versions()['version']
+del get_versions
