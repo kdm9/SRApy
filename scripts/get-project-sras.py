@@ -5,6 +5,7 @@ from docopt import docopt
 from os import path
 import sys
 
+import srapy
 from srapy import (
     get_sample_runs,
     download_run,
@@ -39,4 +40,5 @@ def main(argv=sys.argv[1:]):
 
 
 if __name__ == "__main__":
+    print("SRApy version", srapy.__version__, file=sys.stderr)
     main()
