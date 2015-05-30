@@ -4,9 +4,28 @@ SRApy
 A python library and scripts to make working with NCBI's SRA less arcane.
 
 
+Installation
+============
+
+    pip install srapy
+
+is all anyone on a modern system with pip should need. Dependencies are:
+
+- BioPython
+- lxml
+- docopt
+- progressbar2
+
+
+License
+=======
+
+SRApy is licensed under the GNU General Public License, version 3 or any later
+version. See `./LICENSE` or https://www.gnu.org/licenses/gpl-3.0.en.html
+
+
 Tools
 =====
-
 
 `get-project-sras.py`
 ----------------------
