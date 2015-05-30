@@ -23,23 +23,37 @@ XPATHS = {
 }
 
 
+def human_readable_size(size, suffix='B'):
+    '''Returns a human-readable representation of the size of something'''
+    for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
+        if abs(size) < 1000.0:
+            return "{sz:3.3f}{unt}{suf}".format(sz=size, unt=unit, suf=suffix)
+        size /= 1000.0
+    return "{sz:3.3f}{unt}{suf}".format(sz=size, unt='Y', suf=suffix)
+
+
 def urlretrieve(url, filename, silent=False):
     '''Downloads ``url`` to path ``filename``, silently if ``silent`` is True'''
+    class HumanReadableCounter(Counter):
+        '''Counter() which prints a human readable size'''
+        def update(self, pbar):
+            return human_readable_size(pbar.currval)
     if not silent:
-        print('Downloading ', filename, file=stderr)
+        print('Downloading ', filename, file=stderr, end=', ')
     urlhandle = urllib2.urlopen(url)
     meta = urlhandle.info()
     file_size_dl = 0
     block_sz = 262144  # 256K
     file_size = int(meta.getheaders("Content-Length")[0])
     widgets = [
-        Counter(), 'B, ',
+        HumanReadableCounter(), ' ',
         FileTransferSpeed(), ' ',
         Bar(left='[', right=']'), ' ',
         Percentage(), ' ',
         ETA()
     ]
     if not silent:
+        print(human_readable_size(file_size), file=stderr)
         pbar = ProgressBar(widgets=widgets, maxval=file_size)
         pbar.start()
     with open(filename, 'wb') as fh:
