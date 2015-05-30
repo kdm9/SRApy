@@ -1,7 +1,15 @@
 from __future__ import print_function
 from Bio import Entrez
 from lxml import etree
-from progressbar import FileTransferSpeed, Bar, Percentage, ETA, ProgressBar
+from os import path
+from progressbar import (
+    Bar,
+    Counter,
+    ETA,
+    FileTransferSpeed,
+    Percentage,
+    ProgressBar,
+)
 from sys import stderr
 import urllib2
 
@@ -17,20 +25,23 @@ XPATHS = {
 
 def urlretrieve(url, filename, silent=False):
     '''Downloads ``url`` to path ``filename``, silently if ``silent`` is True'''
+    if not silent:
+        print('Downloading ', filename, file=stderr)
     urlhandle = urllib2.urlopen(url)
     meta = urlhandle.info()
     file_size_dl = 0
-    block_sz = 1048576  # 1MB
+    block_sz = 262144  # 256K
     file_size = int(meta.getheaders("Content-Length")[0])
     widgets = [
-        'Downloading ', filename, ': ',
+        Counter(), 'B, ',
         FileTransferSpeed(), ' ',
-        Bar(), ' ',
+        Bar(left='[', right=']'), ' ',
         Percentage(), ' ',
         ETA()
     ]
     if not silent:
         pbar = ProgressBar(widgets=widgets, maxval=file_size)
+        pbar.start()
     with open(filename, 'wb') as fh:
         while True:
             buffer = urlhandle.read(block_sz)
