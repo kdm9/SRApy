@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from __future__ import print_function
 from Bio import Entrez
 from docopt import docopt
