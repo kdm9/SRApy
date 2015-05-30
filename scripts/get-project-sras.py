@@ -18,7 +18,7 @@ USAGE:
 OPTIONS:
     -e EMAIL        Your email, to provide to Bio.Entrez
                     [default: '']
-    -d OUTDIR       Output directory, must exist. [default: '.']
+    -d OUTDIR       Output directory, must exist. [default: .]
     -p PROJECT_ID   BioProject ID
 """
 
