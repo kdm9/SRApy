@@ -45,7 +45,9 @@ def urlretrieve(url, filename, silent=False):
     urlhandle = urllib2.urlopen(url)
     meta = urlhandle.info()
     file_size = int(meta.getheaders("Content-Length")[0])
-    downloaded_size = path.getsize(filename)
+    downloaded_size = 0
+    if path.exists(filename):
+        downloaded_size = path.getsize(filename)
     if downloaded_size == file_size:
         if not silent:
             print('already downloaded!', file=stderr)
