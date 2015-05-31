@@ -34,28 +34,37 @@ def human_readable_size(size, suffix='B'):
 
 def urlretrieve(url, filename, silent=False):
     '''Downloads ``url`` to path ``filename``, silently if ``silent`` is True'''
+
     class HumanReadableCounter(Counter):
         '''Counter() which prints a human readable size'''
         def update(self, pbar):
             return human_readable_size(pbar.currval)
+
     if not silent:
         print('Downloading ', filename, file=stderr, end=', ')
     urlhandle = urllib2.urlopen(url)
     meta = urlhandle.info()
-    file_size_dl = 0
-    block_sz = 262144  # 256K
     file_size = int(meta.getheaders("Content-Length")[0])
-    widgets = [
-        HumanReadableCounter(), ' ',
-        FileTransferSpeed(), ' ',
-        Bar(left='[', right=']'), ' ',
-        Percentage(), ' ',
-        ETA()
-    ]
+    downloaded_size = path.getsize(filename)
+    if downloaded_size == file_size:
+        if not silent:
+            print('already downloaded!', file=stderr)
+        return
+    # Check file size
     if not silent:
         print(human_readable_size(file_size), file=stderr)
+        # Widgets for the ProgressBar below
+        widgets = [
+            HumanReadableCounter(), ' ',
+            FileTransferSpeed(), ' ',
+            Bar(left='[', right=']'), ' ',
+            Percentage(), ' ',
+            ETA()
+        ]
         pbar = ProgressBar(widgets=widgets, maxval=file_size)
         pbar.start()
+    file_size_dl = 0
+    block_sz = 262144  # 256K
     with open(filename, 'wb') as fh:
         while True:
             buffer = urlhandle.read(block_sz)
