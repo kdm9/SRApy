@@ -35,10 +35,15 @@ def main(argv=sys.argv[1:]):
               file=sys.stderr)
         exit(1)
 
-    for sra_id in get_sample_runs(proj_id):
+    runs = get_sample_runs(proj_id)
+    # add a line between getting run list & downloading
+    print(file=sys.stderr)
+    for idx, sra_id in enumerate(runs):
+        print("Downloading run", idx + 1, "of", len(runs), file=sys.stderr)
         download_run(sra_id)
+        print(file=sys.stderr)  # Extra newline
 
 
 if __name__ == "__main__":
-    print("SRApy version", srapy.__version__, file=sys.stderr)
+    print("SRApy version", srapy.__version__, file=sys.stderr, end='\n\n')
     main()
