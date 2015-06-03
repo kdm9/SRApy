@@ -90,7 +90,10 @@ def accession_to_id(accession, force=False):
             return int(accession)
     except ValueError:
         ids = esearch_ids(db='sra', term=accession)
-        return ids[0]
+        if len(ids) > 0:
+            return ids[0]
+        else:
+            return None
 
 
 def download_run(sra_id, outdir='.', silent=False, fmt='{acc}~{name}.sra'):
