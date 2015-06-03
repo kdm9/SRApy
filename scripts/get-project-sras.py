@@ -14,12 +14,15 @@ from srapy import (
 
 CLI_USAGE = """
 USAGE:
-    get-project-sras.py [-e EMAIL -d OUTDIR] -p PROJECT_ID
+    get-project-sras.py [-e EMAIL -d OUTDIR -F FMT] -p PROJECT_ID
 
 OPTIONS:
     -e EMAIL        Your email, to provide to Bio.Entrez
-                    [default: '']
+                    [default: ] # defaults to empty string
     -d OUTDIR       Output directory, must exist. [default: .]
+    -F FMT          Filename format. Fields 'name', 'id', and 'acc' are
+                    recognised. Use python string formatting syntax.
+                    [default: {acc}~{name}.sra]
     -p PROJECT_ID   BioProject ID
 """
 
@@ -29,6 +32,7 @@ def main(argv=sys.argv[1:]):
     proj_id = int(opts['-p'])
     Entrez.email = opts['-e']
     outdir = opts['-d']
+    fname_fmt = opts['-F']
 
     if not path.isdir(outdir):
         print("ERROR: output directory '{}' doesn't exitst".format(outdir),
@@ -40,7 +44,7 @@ def main(argv=sys.argv[1:]):
     print(file=sys.stderr)
     for idx, sra_id in enumerate(runs):
         print("Downloading run", idx + 1, "of", len(runs), file=sys.stderr)
-        download_run(sra_id, outdir)
+        download_run(sra_id, outdir=outdir, fmt=fname_fmt)
         print(file=sys.stderr)  # Extra newline
 
 

@@ -81,7 +81,7 @@ def urlretrieve(url, filename, silent=False):
         pbar.finish()
 
 
-def download_run(sra_id, outdir='.', silent=False):
+def download_run(sra_id, outdir='.', silent=False, fmt='{acc}~{name}.sra'):
     '''Downloads run with SRA run uid ``sra_id`` to ``outdir``'''
     if not silent:
         print('Retrieving run info for run', sra_id, end='... ', file=stderr)
@@ -92,7 +92,7 @@ def download_run(sra_id, outdir='.', silent=False):
                     'reads/ByRun/sra/{leading3}/{leading6}/{all}/{all}.sra')
     run = run_info['accession']
     run_url = url_template.format(leading3=run[:3], leading6=run[:6], all=run)
-    outfile = '{}~{}.sra'.format(run, run_info['name'])
+    outfile = fmt.format(acc=run, name=run_info['name'], id=sra_id)
     outpath = path.join(outdir, outfile)
     urlretrieve(run_url, outpath)
 
