@@ -55,5 +55,5 @@ setup(
         "License :: OSI Approved :: GNU General Public License v3 or later " +
             "(GPLv3+)",
     ],
-    test_suite="tests",
+    test_suite="test",
 )
