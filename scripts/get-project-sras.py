@@ -40,7 +40,7 @@ def main(argv=sys.argv[1:]):
     print(file=sys.stderr)
     for idx, sra_id in enumerate(runs):
         print("Downloading run", idx + 1, "of", len(runs), file=sys.stderr)
-        download_run(sra_id)
+        download_run(sra_id, outdir)
         print(file=sys.stderr)  # Extra newline
 
 
