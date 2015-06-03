@@ -1,5 +1,6 @@
 *.swp
-*.sra  # SRA files left lying around
+# SRA files left lying around
+*.sra
 
 # python compiled files
 *.pyc
