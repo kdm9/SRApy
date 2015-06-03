@@ -81,6 +81,18 @@ def urlretrieve(url, filename, silent=False):
         pbar.finish()
 
 
+def accession_to_id(accession, force=False):
+    '''Converts ``accession`` to being an id'''
+    try:
+        # Try converting directly to an int, unless we're told to force the
+        # lookup
+        if not force:
+            return int(accession)
+    except ValueError:
+        ids = esearch_ids(db='sra', term=accession)
+        return ids[0]
+
+
 def download_run(sra_id, outdir='.', silent=False, fmt='{acc}~{name}.sra'):
     '''Downloads run with SRA run uid ``sra_id`` to ``outdir``'''
     if not silent:
