@@ -1,5 +1,19 @@
 from setuptools import setup
+from setuptools.command.test import test as TestCommand
 import versioneer
+
+
+# Inspired by the example at https://pytest.org/latest/goodpractises.html
+class NoseCommand(TestCommand):
+    def finalize_options(self):
+        TestCommand.finalize_options(self)
+        self.test_args = []
+        self.test_suite = True
+
+    def run_tests(self):
+        # Run nose ensuring that argv simulates running nosetests directly
+        import nose
+        nose.run_exit(argv=['nosetests'])
 
 versioneer.VCS = 'git'
 versioneer.versionfile_source = 'srapy/_version.py'
@@ -11,28 +25,38 @@ desc = """
 SRApy: Scripts to download SRA files
 """
 
+setup_requires = [
+    'nose>=1.3,<1.4',
+    'coverage>=3.7,<3.8',
+]
+
 install_requires = [
-    "biopython==1.65",
-    "docopt==0.6.2",
-    "lxml==3.4.4",
-    "progressbar2==2.7.3",
+    'biopython==1.65',
+    'docopt==0.6.2',
+    'lxml==3.4.4',
+    'progressbar2==2.7.3',
 ]
 
 test_requires = [
-    "coverage==3.7.1",
-    "nose==1.3.0",
-    "pep8==1.4.6",
-    "pylint==1.0.0",
+    'pep8>=1.6,<1.7',
+    'pylint>=1.4,<1.5',
 ]
+
+command_classes=versioneer.get_cmdclass()
+command_classes['test'] =  NoseCommand
 
 setup(
     name="srapy",
     packages=['srapy', ],
-    scripts=['scripts/get-project-sras.py',],
+    scripts=[
+        'scripts/get-project-sras.py',
+        'scripts/get-run.py',
+    ],
     version=versioneer.get_version(),
-    cmdclass=versioneer.get_cmdclass(),
+    cmdclass=command_classes,
     install_requires=install_requires,
     tests_require=test_requires,
+    setup_requires=setup_requires,
     description=desc,
     author="Kevin Murray",
     author_email="spam@kdmurray.id.au",
