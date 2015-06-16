@@ -62,7 +62,7 @@ for Joe Ecker's contribution to the 1001 genomes project.
 
 To download all SRA files, run:
 
-    get-projects-sras.py -d /path/to/sras -e you@example.com -p 30811
+    get-project-sras.py -d /path/to/sras -e you@example.com -p 30811
 
 This will fetch the project, and search SRA for the metadata and run
 accessions. It will download the SRA files, naming them by their SRA accession
