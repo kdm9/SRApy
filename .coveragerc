@@ -1,0 +1,5 @@
+[run]
+omit = srapy/_version.py
+
+[report]
+omit = srapy/_version.py
