@@ -1,4 +1,7 @@
 import srapy
+from nose.tools import (
+    assert_raises,
+)
 
 
 def setup():
@@ -22,8 +25,8 @@ def test_accession_to_id():
     assert sra_id == 1466194, sra_id
 
     # bad accession
-    sra_id = srapy.accession_to_id('notacc')
-    assert sra_id is None, sra_id
+    with assert_raises(ValueError):
+        sra_id = srapy.accession_to_id('notacc')
 
 
 def test_esearch_ids():

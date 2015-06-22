@@ -84,16 +84,20 @@ def urlretrieve(url, filename, silent=False):
 def accession_to_id(accession, force=False):
     '''Converts ``accession`` to being an id'''
     try:
-        # Try converting directly to an int, unless we're told to force the
-        # lookup
-        if not force:
-            return int(accession)
+        # Force the Entrez lookup by raising ValueError
+        if force:
+            raise ValueError
+        # Try converting directly to an int, falling back to getting ID from
+        # Entrez
+        return int(accession)
     except ValueError:
-        ids = esearch_ids(db='sra', term=accession)
-        if len(ids) > 0:
+        # Lookup numeric ID from accession
+        term = '{}[Accession]'.format(accession)
+        ids = esearch_ids(db='sra', term=term)
+        if len(ids) == 1:
             return ids[0]
         else:
-            return None
+            raise ValueError("Couldn't get SRA UID of accession", accession)
 
 
 def download_run(sra_id, outdir='.', silent=False, fmt='{acc}~{name}.sra'):
