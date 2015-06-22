@@ -1,12 +1,28 @@
+from os import path
+from shutil import rmtree
+from tempfile import mkdtemp
+
 import srapy
 from nose.tools import (
     assert_raises,
 )
 
+OUTDIR = None
+
 
 def setup():
     '''Setup function for this module'''
     srapy.Entrez.email = 'kevin.murray@anu.edu.au'
+
+    global OUTDIR
+    OUTDIR = mkdtemp('srapy-test')
+
+
+def teardown():
+    '''Tear-down function for this module'''
+    global OUTDIR
+    rmtree(OUTDIR)
+    OUTDIR = None
 
 
 def test_accession_to_id():
@@ -47,3 +63,12 @@ def test_esearch_ids():
     # Search with no results
     id_list = srapy.esearch_ids(db='sra', term='abasdkjfslakdjflskdjflasjdf')
     assert id_list == [], id_list
+
+
+def test_urlretrieve():
+    '''Test srapy.urlretrieve'''
+
+    # Test downloading a file silently
+    outfile = path.join(OUTDIR, 'test_1mb.dat')
+    srapy.urlretrieve('http://ftp.iinet.net.au/1mb.dat', outfile, stream=None)
+    assert path.exists(outfile), 'Download failed'

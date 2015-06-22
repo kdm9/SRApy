@@ -11,7 +11,7 @@ from progressbar import (
     ProgressBar,
 )
 from sys import stderr
-import urllib2
+from six.moves import urllib
 
 
 # SRA XML xpath
@@ -32,29 +32,49 @@ def human_readable_size(size, suffix='B'):
     return "{sz:3.3f}{unt}{suf}".format(sz=size, unt='Y', suf=suffix)
 
 
-def urlretrieve(url, filename, silent=False):
-    '''Downloads ``url`` to path ``filename``, silently if ``silent`` is True'''
+def urlretrieve(url, filename, stream=stderr, retries=3):
+    '''Downloads ``url`` to path ``filename``, silently if 'stream' is None'''
 
     class HumanReadableCounter(Counter):
         '''Counter() which prints a human readable size'''
         def update(self, pbar):
             return human_readable_size(pbar.currval)
 
-    if not silent:
-        print('Downloading ', filename, file=stderr, end=', ')
-    urlhandle = urllib2.urlopen(url)
+    if stream is not None:
+        print('Downloading ', filename, file=stream, end=', ')
+
+    # Establish connection to server
+    exc = None
+    urlhandle = None
+    while retries > 0 and urlhandle is None:
+        try:
+            urlhandle = urllib.request.urlopen(url, timeout=10)
+        except urllib.error.URLError as exc:
+            retries -= 1
+            urlhandle = None
+            exc = exc
+    if urlhandle is None:
+        if exc is not None:
+            raise exc
+        else:
+            raise RuntimeError("Download of", url, "failed")
+
+    # Get metadata, check if we need to download
     meta = urlhandle.info()
     file_size = int(meta.getheaders("Content-Length")[0])
     downloaded_size = 0
+    # Check file size
     if path.exists(filename):
         downloaded_size = path.getsize(filename)
     if downloaded_size == file_size:
-        if not silent:
-            print('already downloaded!', file=stderr)
+        if stream is not None:
+            print('already downloaded!', file=stream)
         return
-    # Check file size
-    if not silent:
-        print(human_readable_size(file_size), file=stderr)
+
+    # Set up the progress bar etc.
+    if stream is not None:
+        # On previous line
+        print(human_readable_size(file_size), file=stream)
         # Widgets for the ProgressBar below
         widgets = [
             HumanReadableCounter(), ' ',
@@ -65,6 +85,8 @@ def urlretrieve(url, filename, silent=False):
         ]
         pbar = ProgressBar(widgets=widgets, maxval=file_size)
         pbar.start()
+
+    # Download the file
     file_size_dl = 0
     block_sz = 262144  # 256K
     with open(filename, 'wb') as fh:
@@ -74,10 +96,9 @@ def urlretrieve(url, filename, silent=False):
                 break
             fh.write(buffer)
             file_size_dl += len(buffer)
-            if not silent:
+            if stream is not None:
                 pbar.update(file_size_dl)
-            pct_complete = file_size_dl * 100. / file_size
-    if not silent:
+    if stream is not None:
         pbar.finish()
 
 
@@ -100,13 +121,13 @@ def accession_to_id(accession, force=False):
             raise ValueError("Couldn't get SRA UID of accession", accession)
 
 
-def download_run(sra_id, outdir='.', silent=False, fmt='{acc}~{name}.sra'):
+def download_run(sra_id, outdir='.', stream=stderr, fmt='{acc}~{name}.sra'):
     '''Downloads run with SRA run uid ``sra_id`` to ``outdir``'''
-    if not silent:
-        print('Retrieving run info for run', sra_id, end='... ', file=stderr)
+    if stream is not None:
+        print('Retrieving run info for run', sra_id, end='... ', file=stream)
     run_info = parse_run(sra_id)
-    if not silent:
-        print('done.', file=stderr)
+    if stream is not None:
+        print('done.', file=stream)
     url_template = ('ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/'
                     'reads/ByRun/sra/{leading3}/{leading6}/{all}/{all}.sra')
     run = run_info['accession']
@@ -116,14 +137,14 @@ def download_run(sra_id, outdir='.', silent=False, fmt='{acc}~{name}.sra'):
     urlretrieve(run_url, outpath)
 
 
-def get_sample_runs(proj_id, silent=False):
+def get_sample_runs(proj_id, stream=stderr):
     '''Gets a list of SRA run IDs from a given BioProject ID'''
-    if not silent:
-        print('Finding SRA runs for project', proj_id, end='... ', file=stderr)
+    if stream is not None:
+        print('Finding SRA runs for project', proj_id, end='... ', file=stream)
     term = '{}[BioProject]'.format(proj_id)
     sra_id_list = esearch_ids(db='sra', term=term)
-    if not silent:
-        print('found', len(sra_id_list), file=stderr)
+    if stream is not None:
+        print('found', len(sra_id_list), file=stream)
     return sra_id_list
 
 
