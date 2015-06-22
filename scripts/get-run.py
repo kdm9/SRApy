@@ -55,6 +55,7 @@ def main(argv=sys.argv[1:]):
                 ids.append(line.strip())
 
     uids = []
+    bad_ids = []
     print("Getting accession UIDs ...", end='\r', file=sys.stderr)
     for idx, id_or_acc in enumerate(ids):
         try:
@@ -64,12 +65,19 @@ def main(argv=sys.argv[1:]):
         except ValueError:
             print("\nWARNING: Skipping non-existant accession", id_or_acc,
                   end='\n', file=sys.stderr)
+            bad_ids.append(id_or_acc)
     print("\33[2KGetting accession UIDs ... Done", end='\n\n', file=sys.stderr)
 
     for idx, sra_id in enumerate(uids):
         print("Downloading run", idx + 1, "of", len(uids), file=sys.stderr)
         download_run(sra_id, outdir=outdir, fmt=fname_fmt)
         print(file=sys.stderr)  # Extra newline between records
+
+    print("Finished!", file=sys.stderr)
+    if len(bad_ids) > 0:
+        print("The following accessions or IDs were skipped:", file=sys.stderr)
+        for id in bad_ids:
+            print("\t", id, file=sys.stderr)
 
 
 if __name__ == "__main__":
