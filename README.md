@@ -11,6 +11,7 @@ Installation
 
 is all anyone on a modern system with pip should need. Dependencies are:
 
+- `six`
 - `BioPython`
 - `lxml`
 - `docopt`
