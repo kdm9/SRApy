@@ -57,9 +57,13 @@ def main(argv=sys.argv[1:]):
     uids = []
     print("Getting accession UIDs ...", end='\r', file=sys.stderr)
     for idx, id_or_acc in enumerate(ids):
-        uids.append(accession_to_id(id_or_acc, force=opts['-a']))
-        print("Getting accession UIDs ...", idx + 1, "of", len(ids),
-              end='\r', file=sys.stderr)
+        try:
+            uids.append(accession_to_id(id_or_acc, force=opts['-a']))
+            print("Getting accession UIDs ...", idx + 1, "of", len(ids),
+                  end='\r', file=sys.stderr)
+        except ValueError:
+            print("\nWARNING: Skipping non-existant accession", id_or_acc,
+                  end='\n', file=sys.stderr)
     print("\33[2KGetting accession UIDs ... Done", end='\n\n', file=sys.stderr)
 
     for idx, sra_id in enumerate(uids):
