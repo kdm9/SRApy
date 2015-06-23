@@ -14,9 +14,11 @@ from srapy import (
 
 CLI_USAGE = """
 USAGE:
-    get-run.py [-e EMAIL -d OUTDIR -F FMT -a] (-i SRA_ID | -f FILE)
+    get-run.py [-e EMAIL -d OUTDIR -F FMT -a -s] (-i SRA_ID | -f FILE)
 
 OPTIONS:
+    -s              Simple mode: Downloads SRA files directly with no error
+                    checking or metadata retrieval. Fixes format to '{acc}.sra'
     -e EMAIL        Your email, to provide to Bio.Entrez
                     [default: ] # defaults to empty string
     -d OUTDIR       Output directory, must exist. [default: .]
@@ -32,6 +34,19 @@ OPTIONS:
                     interpretation
     -f FILE         New-line delimited list of identifiers
 """
+
+
+def simple_download(sra_list, outdir):
+    url_template = ('ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/'
+                    'reads/ByRun/sra/{leading3}/{leading6}/{all}/{all}.sra')
+    for accession in sra_list:
+
+        run_url = url_template.format(leading3=accession[:3],
+                                      leading6=accession[:6],
+                                      all=accession)
+        outfile = '{}.sra'.format(accession)
+        outpath = path.join(outdir, outfile)
+        srapy.urlretrieve(run_url, outpath)
 
 
 def main(argv=sys.argv[1:]):
@@ -53,6 +68,9 @@ def main(argv=sys.argv[1:]):
         with open(opts['-f']) as fh:
             for line in fh:
                 ids.append(line.strip())
+
+    if opts['-s']:
+        return simple_download(ids, outdir);
 
     uids = []
     bad_ids = []
