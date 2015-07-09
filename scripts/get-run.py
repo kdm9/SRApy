@@ -40,9 +40,6 @@ def simple_download(sra_list, outdir):
     url_template = 'ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/' +
         'reads/ByRun/sra/{leading3}/{leading6}/{all}/{all}.sra'
     for accession in sra_list:
-        accession = accession.strip()
-        if accession == '':
-            continue
         run_url = url_template.format(leading3=accession[:3],
                                       leading6=accession[:6],
                                       all=accession)
@@ -69,7 +66,10 @@ def main(argv=sys.argv[1:]):
     else:
         with open(opts['-f']) as fh:
             for line in fh:
-                ids.append(line.strip())
+                acc = line.strip()
+                if not acc:
+                    continue
+                ids.append(acc)
 
     if opts['-s']:
         return simple_download(ids, outdir);
