@@ -37,10 +37,12 @@ OPTIONS:
 
 
 def simple_download(sra_list, outdir):
-    url_template = ('ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/'
-                    'reads/ByRun/sra/{leading3}/{leading6}/{all}/{all}.sra')
+    url_template = 'ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/' +
+        'reads/ByRun/sra/{leading3}/{leading6}/{all}/{all}.sra'
     for accession in sra_list:
-
+        accession = accession.strip()
+        if accession == '':
+            continue
         run_url = url_template.format(leading3=accession[:3],
                                       leading6=accession[:6],
                                       all=accession)
