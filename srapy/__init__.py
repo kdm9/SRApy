@@ -61,7 +61,10 @@ def urlretrieve(url, filename, stream=stderr, retries=3):
 
     # Get metadata, check if we need to download
     meta = urlhandle.info()
-    file_size = int(meta.getheaders("Content-Length")[0])
+    try:
+        file_size = int(meta.getheaders("Content-Length")[0])
+    except AttributeError:
+        file_size = int(meta["Content-Length"])
     downloaded_size = 0
     # Check file size
     if path.exists(filename):
