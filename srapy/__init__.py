@@ -14,6 +14,12 @@ from sys import stderr
 from six.moves import urllib
 
 
+# versioneer
+from ._version import get_versions
+__version__ = get_versions()['version']
+del get_versions
+
+
 # SRA XML xpath
 XPATHS = {
     'name':
@@ -23,9 +29,9 @@ XPATHS = {
 }
 
 
-def human_readable_size(size, suffix='B'):
+def human_readable_size(size, suffix='B', maxsuffix='M'):
     '''Returns a human-readable representation of the size of something'''
-    for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z']:
+    for unit in ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']:
         if abs(size) < 1000.0:
             return "{sz:3.3f}{unt}{suf}".format(sz=size, unt=unit, suf=suffix)
         size /= 1000.0
@@ -44,7 +50,6 @@ def urlretrieve(url, filename, stream=stderr, retries=3):
         print('Downloading ', filename, file=stream, end=', ')
 
     # Establish connection to server
-    exc = None
     urlhandle = None
     while retries > 0 and urlhandle is None:
         try:
@@ -52,12 +57,9 @@ def urlretrieve(url, filename, stream=stderr, retries=3):
         except urllib.error.URLError as exc:
             retries -= 1
             urlhandle = None
-            exc = exc
+            print(str(exc))
     if urlhandle is None:
-        if exc is not None:
-            raise exc
-        else:
-            raise RuntimeError("Download of", url, "failed")
+        raise RuntimeError("Download of", url, "failed")
 
     # Get metadata, check if we need to download
     meta = urlhandle.info()
@@ -186,9 +188,3 @@ def esearch_ids(**kwargs):
     # Convert str-encoded ints to actual ints.
     id_list = map(int, id_list)
     return id_list
-
-
-# versioneer
-from ._version import get_versions
-__version__ = get_versions()['version']
-del get_versions
