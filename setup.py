@@ -22,9 +22,7 @@ versioneer.versionfile_build = 'srapy/_version.py'
 versioneer.tag_prefix = ''
 versioneer.parentdir_prefix = 'srapy-'
 
-desc = """
-SRApy: Scripts to download SRA files
-"""
+desc = "SRApy: Scripts to download SRA files"
 
 setup_requires = [
     'nose>=1.3,<1.4',
@@ -44,8 +42,8 @@ test_requires = [
     'pylint>=1.4,<1.5',
 ]
 
-command_classes=versioneer.get_cmdclass()
-command_classes['test'] =  NoseCommand
+command_classes = versioneer.get_cmdclass()
+command_classes['test'] = NoseCommand
 
 setup(
     name="srapy",
@@ -78,8 +76,7 @@ setup(
         "Operating System :: OS Independent",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Scientific/Engineering :: Bio-Informatics",
-        "License :: OSI Approved :: GNU General Public License v3 or later " +
-            "(GPLv3+)",
+        "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
     ],
     test_suite="test",
 )
