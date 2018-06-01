@@ -119,7 +119,7 @@ def accession_to_id(accession, force=False):
     except ValueError:
         # Lookup numeric ID from accession
         term = '{}[Accession]'.format(accession)
-        ids = esearch_ids(db='sra', term=term)
+        ids = list(esearch_ids(db='sra', term=term))
         if len(ids) == 1:
             return ids[0]
         else:
