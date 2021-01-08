@@ -33,7 +33,7 @@ install_requires = [
     'six>=1.9,<2.0',
     'biopython>=1.65',
     'docopt>=0.6,<0.7',
-    'lxml>=3.4,<3.5',
+    'lxml>=3.4,<4.7',
     'progressbar2>=2.7,<2.8',
 ]
 
