@@ -186,5 +186,5 @@ def esearch_ids(**kwargs):
         id_list.extend(rec['IdList'])
         done += len(rec['IdList'])
     # Convert str-encoded ints to actual ints.
-    id_list = map(int, id_list)
+    id_list = list(map(int, id_list))
     return id_list
