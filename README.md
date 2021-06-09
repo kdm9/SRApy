@@ -1,3 +1,8 @@
+# OBSOLETE: use pysradb
+
+https://github.com/saketkc/pysradb
+
+
 SRApy
 =====
 
